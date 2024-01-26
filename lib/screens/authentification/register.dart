@@ -31,7 +31,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: background1,
-        // centerTitle: true,
+        centerTitle: false,
         title: Text("Register", style: TextStyle(color: Colors.white)),
         actions: [
           ElevatedButton(

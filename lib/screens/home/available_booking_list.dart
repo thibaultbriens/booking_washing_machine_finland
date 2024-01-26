@@ -4,6 +4,7 @@ import 'package:booking_finland_washing_machine/shared/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class AvailableBookingList extends StatefulWidget {
 
@@ -19,6 +20,8 @@ class _AvailableBookingListState extends State<AvailableBookingList> {
   @override
   Widget build(BuildContext context){
 
+    bool isMobile = getDeviceType(MediaQuery.of(context).size) == DeviceScreenType.mobile;
+
     User? _currentUser = Provider.of<User?>(context);
 
     CalendarService _calendarService = CalendarService(dateFormat.format(widget.dateTime), _currentUser!.uid);
@@ -28,7 +31,7 @@ class _AvailableBookingListState extends State<AvailableBookingList> {
 
     return Container(
       child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: isMobile ? 42 : 50, vertical: isMobile ? 14 : 20),
         itemCount: available.length,
         itemBuilder: (context, index) {
           //print("inside widget : $available");

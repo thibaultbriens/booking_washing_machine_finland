@@ -7,6 +7,7 @@ import 'package:booking_finland_washing_machine/shared/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class Home extends StatefulWidget {
   const Home({ Key? key }) : super(key: key);
@@ -25,7 +26,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    print("datetime = ${dateTime.toString()}");
+    bool isMobile = getDeviceType(MediaQuery.of(context).size) == DeviceScreenType.mobile;
 
     final User? _currentUser = Provider.of<User?>(context);
     final AuthService _authSerivce = AuthService();
@@ -71,21 +72,21 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(50, 20, 50, 5),
+              padding: EdgeInsets.fromLTRB(isMobile ? 42 : 50, 20, 50, 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     dateTimeToString(dateTime),
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: isMobile ? 16 : 20,
                     ),
                   ),
                   SizedBox(width: 15,),
                   // back date button
                   Container(
-                    width: 40,
-                    height: 30,
+                    width: isMobile ? 30 : 40,
+                    height: isMobile ? 22 : 30,
                     child: MaterialButton(
                       onPressed: () {
                         if(dateTime.day == DateTime.now().day){
@@ -114,14 +115,15 @@ class _HomeState extends State<Home> {
                       child: Icon(
                         Icons.arrow_back_ios_rounded,
                         color: Colors.white,
+                        size: isMobile ? 18 : 25,
                       ),
                     ),
                   ),
                   SizedBox(width: 5,),
                   // next date button
                   Container(
-                    width: 40,
-                    height: 30,
+                    width: isMobile ? 30 : 40,
+                    height: isMobile ? 22 : 30,
                     child: MaterialButton(
                       onPressed: () {
                         setState(() {
@@ -136,6 +138,7 @@ class _HomeState extends State<Home> {
                       child: Icon(
                         Icons.arrow_forward_ios_rounded,
                         color: Colors.white,
+                        size: isMobile ? 18 : 25,
                       ),
                     ),
                   ),

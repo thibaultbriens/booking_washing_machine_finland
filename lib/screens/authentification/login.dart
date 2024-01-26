@@ -31,7 +31,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: background1,
-        // centerTitle: true,
+        centerTitle: false,
         title: Text("Log in", style: TextStyle(color: Colors.white)),
         actions: [
           ElevatedButton(
