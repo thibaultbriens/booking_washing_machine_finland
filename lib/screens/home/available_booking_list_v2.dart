@@ -6,17 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class AvailableBookingList extends StatefulWidget {
+class AvailableBookingListV2 extends StatefulWidget {
 
   DateTime dateTime;
 
-  AvailableBookingList(this.dateTime) {}
+  bool previousBooks;
+  bool nextBooks;
+
+  AvailableBookingListV2(this.dateTime, this.previousBooks, this.nextBooks) {}
 
   @override
-  State<AvailableBookingList> createState() => _AvailableBookingListState();
+  State<AvailableBookingListV2> createState() => _AvailableBookingListV2State();
 }
 
-class _AvailableBookingListState extends State<AvailableBookingList> {
+class _AvailableBookingListV2State extends State<AvailableBookingListV2> {
   @override
   Widget build(BuildContext context){
 
@@ -29,16 +32,17 @@ class _AvailableBookingListState extends State<AvailableBookingList> {
     Map<int, int> available = Provider.of<Map<int, int>>(context);
     List<int> keys = available.keys.toList();
 
+
     return Container(
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: isMobile ? 42 : 50, vertical: isMobile ? 14 : 20),
         itemCount: available.length,
         itemBuilder: (context, index) {
           //print("inside widget : $available");
-          return Padding(
+          return (!widget.previousBooks && keys[index] < 8) || (!widget.nextBooks && keys[index] > 22) ? Container() : Padding(
             padding: EdgeInsets.only(bottom: isMobile ? 4 : 10),
             child: ElevatedButton(
-              child: Text("${keys[index]}:00 - ${keys[index] + 2}:00", style: TextStyle(color: Colors.white, fontSize: 18)),
+              child: Text("${keys[index]}:00 - ${keys[index] + 2}:00", style: TextStyle(color: Colors.white, fontSize: isMobile ? 16 : 18)),
               onPressed: ()  {
                 showDialog(
                   context: context,
@@ -70,7 +74,7 @@ class _AvailableBookingListState extends State<AvailableBookingList> {
                     )
                   ),
             ),
-          );
+          ) ;
         },
       ),
     );

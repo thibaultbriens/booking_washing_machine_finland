@@ -1,5 +1,6 @@
 import 'package:booking_finland_washing_machine/backend/auth.dart';
 import 'package:booking_finland_washing_machine/shared/constants.dart';
+import 'package:booking_finland_washing_machine/shared/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       appBar: AppBar(
         backgroundColor: background1,
         centerTitle: false,
@@ -65,6 +66,9 @@ class _LoginState extends State<Login> {
                 child: Text("Log In", style: TextStyle(color: Colors.white)),
                 onPressed: () async {
                   if(_formKey.currentState!.validate()){
+                    setState(() {
+                      loading = true;
+                    });
                     User? user = await _authService.logIn(_currentName!, _currentPassword!);
 
                     if(user == null){
