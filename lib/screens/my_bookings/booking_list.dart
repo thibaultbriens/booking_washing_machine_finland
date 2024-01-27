@@ -15,7 +15,6 @@ class BookingList extends StatelessWidget {
 
     User? _currentUser = Provider.of<User?>(context);
     List<dynamic> _userBookings = Provider.of<List<dynamic>>(context);
-    CalendarService _calendarService = CalendarService(dateFormat.format(dateTime), _currentUser!.uid);
     
     return ListView.builder(
               itemCount: (_userBookings.length / 2).toInt(),
@@ -41,7 +40,7 @@ class BookingList extends StatelessWidget {
                                 TextButton(
                                   child: Text("Yes", style: TextStyle(color: background2)),
                                   onPressed: () async {
-                                    _calendarService.deleteBooking(_userBookings[index * 2 + 1]);
+                                    CalendarService(_userBookings[index * 2], _currentUser!.uid).deleteBooking(_userBookings[index * 2 + 1]);
                                     Navigator.pop(context);
                                   },
                                 ),
