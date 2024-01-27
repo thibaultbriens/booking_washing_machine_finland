@@ -60,6 +60,21 @@ class _AvailableBookingListV2State extends State<AvailableBookingListV2> {
                           onPressed: () async {
                             _calendarService.bookTime(keys[index]);
                             Navigator.pop(context);
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text("🎉", textAlign: TextAlign.center, style: TextStyle(fontSize: 40)),
+                                content: Text("Successfully booked,\nSee all your bookings by clicking the top right corner", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w500)),
+                                /*actions: [
+                                  TextButton(
+                                    child: Text("Close", style: TextStyle(color: background2)),
+                                    onPressed: () => Navigator.pop(context),
+                                  ) 
+                                ],*/
+                                );
+                              }
+                            );
                           },
                         ),
                       ],

@@ -3,6 +3,7 @@ import 'package:booking_finland_washing_machine/shared/constants.dart';
 import 'package:booking_finland_washing_machine/shared/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class Login extends StatefulWidget {
 
@@ -29,6 +30,9 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context){
+
+    bool isMobile = getDeviceType(MediaQuery.of(context).size) == DeviceScreenType.mobile;
+
     return loading ? Loading() : Scaffold(
       appBar: AppBar(
         backgroundColor: background1,
@@ -43,7 +47,7 @@ class _LoginState extends State<Login> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: isMobile ? 30 : 50),
         child: Form(
           key: _formKey,
           child: Column(
