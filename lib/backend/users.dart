@@ -33,7 +33,7 @@ class Users {
     currentBookings.add(date);
     currentBookings.add(hour);
 
-    return await _users.doc(uid).set({
+    return await _users.doc(uid).update({
       "bookings" : currentBookings
     });
   }

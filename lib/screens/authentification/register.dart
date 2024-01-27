@@ -25,8 +25,13 @@ class _RegisterState extends State<Register> {
   // form values
   String? _currentName;
   String? _currentPassword;
+  String? _currentFirstname;
+  String? _currentLastname;
 
   String error = "";
+
+  bool showPassword = false;
+  bool showPasswordConfirmation = false;
 
   @override
   Widget build(BuildContext context){
@@ -52,17 +57,65 @@ class _RegisterState extends State<Register> {
           key: _formKey,
           child: Column(
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      validator: (value) => value == null || value.isEmpty ? "Please enter your firstname" : null,
+                      decoration: textInputDecoration.copyWith(hintText: "Firstname"),
+                      onChanged: (value) => setState(() =>  _currentFirstname = value),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: TextFormField(
+                      validator: (value) => value == null || value.isEmpty ? "Please enter your lastname" : null,
+                      decoration: textInputDecoration.copyWith(hintText: "Lastname"),
+                      onChanged: (value) => setState(() =>  _currentLastname = value),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
               TextFormField(
-                validator: (value) => value == null || value.isEmpty ? "Please enter a username" : null,
+                validator: (value) {
+                  if(value == null || value.isEmpty)
+                    return "Please enter a username";
+                  if(value.toLowerCase() != value)
+                    return "Enter a full lowercase username";
+                  if(value.contains(' '))
+                    return "Username should not contain spaces";
+                  if(value.contains('@'))
+                    return "Please enter a username, not an email";
+                  return null;
+                  },
                 decoration: textInputDecoration.copyWith(hintText: "Username"),
                 onChanged: (value) => setState(() => _currentName = value),
               ),
               SizedBox(height: 8),
               TextFormField(
-                validator: (value) => value == null || value.length < 6 ? "Please enter a minimum 6 character long password" : null,
-                obscureText: true,
-                decoration: textInputDecoration.copyWith(hintText: "Password"),
+                validator: (value) => value == null || value.isEmpty ? "Please enter a password" : null,
+                obscureText: !showPassword,
+                decoration: textInputDecoration.copyWith(
+                  hintText: "Password",
+                  suffixIcon: IconButton(
+                    icon: Icon(showPassword ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setState(() => showPassword = !showPassword),
+                  ),
+                  ),
                 onChanged: (value) => setState(() =>  _currentPassword = value),
+              ),
+              SizedBox(height: 8),
+              TextFormField(
+                validator: (value) => value != _currentPassword ? "Both password don't match" : null,
+                obscureText: showPasswordConfirmation,
+                decoration: textInputDecoration.copyWith(
+                  hintText: "Password Confirmation",
+                  suffixIcon: IconButton(
+                    icon: Icon(showPasswordConfirmation ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setState(() => showPasswordConfirmation = !showPasswordConfirmation),
+                  ),
+                  ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -73,7 +126,7 @@ class _RegisterState extends State<Register> {
                     setState(() {
                       loading = true;
                     });
-                    User? user = await _authService.register(_currentName!, _currentPassword!);
+                    User? user = await _authService.register(_currentFirstname!, _currentLastname!, _currentName!, _currentPassword!);
 
                     if(user == null){
                       setState(() {

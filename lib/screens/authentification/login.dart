@@ -28,6 +28,8 @@ class _LoginState extends State<Login> {
 
   String error = "";
 
+  bool showPassword = false;
+
   @override
   Widget build(BuildContext context){
 
@@ -60,8 +62,14 @@ class _LoginState extends State<Login> {
               SizedBox(height: 8),
               TextFormField(
                 validator: (value) => value == null || value.isEmpty ? "Please enter a password" : null,
-                obscureText: true,
-                decoration: textInputDecoration.copyWith(hintText: "Password"),
+                obscureText: !showPassword,
+                decoration: textInputDecoration.copyWith(
+                  hintText: "Password",
+                  suffixIcon: IconButton(
+                    icon: Icon(showPassword ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setState(() => showPassword = !showPassword),
+                  ),
+                  ),
                 onChanged: (value) => setState(() =>  _currentPassword = value),
               ),
               SizedBox(height: 20),
