@@ -55,4 +55,13 @@ class AuthService {
     }
 
   }
+
+  Future resetPassword(String email) async {
+    try{
+      return _auth.sendPasswordResetEmail(email: email);
+    } catch (e){
+      print("auth.dart: restePassword" + e.toString());
+      return null;
+    }
+  }
 }

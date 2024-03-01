@@ -29,13 +29,24 @@ class Users {
 
   // push new data to a user document
   Future updateData (String date, int hour) async{
-    List<dynamic> currentBookings = await getBooked();
-    currentBookings.add(date);
-    currentBookings.add(hour);
+    try{
+      List<dynamic> currentBookings = await getBooked();
+      currentBookings.add(date);
+      currentBookings.add(hour);
 
-    return await _users.doc(uid).update({
-      "bookings" : currentBookings
-    });
+      try{
+        return await _users.doc(uid).update({
+          "bookings" : currentBookings
+        });
+      } catch (e){
+        return await _users.doc(uid).set({
+          "bookings" : currentBookings
+        });
+      }
+    } catch(e){
+      print("in users.dart in updateData: " + e.toString());
+      return null;
+    }
   }
 
   List<dynamic> _stringListFromDocSnap (DocumentSnapshot snap) {

@@ -108,7 +108,7 @@ class _RegisterState extends State<Register> {
               SizedBox(height: 8),
               TextFormField(
                 validator: (value) => value != _currentPassword ? "Both password don't match" : null,
-                obscureText: showPasswordConfirmation,
+                obscureText: !showPasswordConfirmation,
                 decoration: textInputDecoration.copyWith(
                   hintText: "Password Confirmation",
                   suffixIcon: IconButton(

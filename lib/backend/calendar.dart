@@ -1,4 +1,5 @@
 import 'package:booking_finland_washing_machine/backend/users.dart';
+import 'package:booking_finland_washing_machine/shared/functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -53,139 +54,79 @@ class CalendarService {
   }
 
   // check if we can add a booking
-  Future<bool> checkTimeAvailabilty (int startingTime) async {
+  Future<String?> checkTimeAvailabilty (int startingTime) async {
     try{
-      // first, check that the current user doesn't already have a reservation for this date
-      List<dynamic> userBookings = await Users(userUid).getBooked();
-      if(userBookings.contains(dateUid)){
-        for(int i = 0; i < userBookings.length - 1; i += 2){
-          if(userBookings[i] == dateUid && userBookings[i + 1] == startingTime){
-            print("User already have this booking");
-            return false;
-          }
-        }
-      }
+      // check that user doesn't already have a reservation for less that 7 days
+      /*List<dynamic> userBookings = await Users(userUid).getBooked();
+      DateTime current = dateStringtoDateTime(dateUid, hour: startingTime);
+      print("current: " + current.toString());
+      for(int i = 0; i < userBookings.length; i += 2){
+        DateTime e = dateStringtoDateTime(userBookings[i], hour: userBookings[i + 1]);
+        print("e: " + e.toString());
+
+        
+        if(e.difference(current).abs().inDays < 7)
+          return "You have already used your weekly booking";
+      }*/
 
       // get the booked list
       List<dynamic> booked = await getBookedList();
       
-      int n = 0; // number of occurences at the same starting time
-      int m1 = 0; // number of occurences 1 hour after (since it is 2 hours slots it is mandatory to chekc that)
-      int m2 = 0; // number of occurences 1 hour before (since it is 2 hours slots it is mandatory to chekc that)
-      for(dynamic el in booked){
-        if(el == startingTime)
-          n++;
-        else if(el == startingTime + 1)
-          m1++;
-        else if(el == startingTime - 1)
-          m2++;
+      if(booked.contains(startingTime) || booked.contains(startingTime)){
+        return "Already booked";
       }
-      
-      if(n == 2 || m1 == 2 || m2 == 2)
-        return false;
-      else if(n == 0)
-        return true;
-      else if(m2 == 1 && m1 == 1)
-        return false;
-      return true;
-
-    } catch(e){
-      print(e.toString());
-      return false;
-    }
+      return null;
+  } catch(e) {
+    print("in calendar.dart in checkAvailability" + e.toString());
+    return "Error";
+  }
   }
 
-  Future bookTime (int startingTime) async {
+  Future<String?> bookTime (int startingTime) async {
     // check that time is available
-    bool isAvailable = await checkTimeAvailabilty(startingTime);
+    String? isAvailable = await checkTimeAvailabilty(startingTime);
     print("time is available : $isAvailable");
 
-    if(isAvailable){
+    if(isAvailable == null){
       try{
         List<dynamic> booked = await getBookedList();
         booked.add(startingTime);
         List<dynamic> bookedBy = await getBookedByList();
         bookedBy.add(userUid);
         Users(userUid).updateData(dateUid, startingTime);
-        return await _cal.doc(dateUid).set({
+        await _cal.doc(dateUid).set({
           "booked": booked,
           "bookedBy": bookedBy
         });
-      } catch(e){
-        print(e.toString());
         return null;
+      } catch(e){
+        print("in calendar.dart in bookTime: " + e.toString());
+        return "Error";
       }
     }
-    return null;
+    return isAvailable;
   }
 
 
-  Map<int, int> _listFromSnap(DocumentSnapshot snapshot){
+  List<int> _listFromSnap(DocumentSnapshot snapshot){
     try{
       List<dynamic> alreadyBooked = snapshot.get("booked");
-      List<dynamic> alreadyBookedBy = snapshot.get("bookedBy");
 
-      // now create the list of the available slots
-      Map<int, int> available = {};
-      // load all the Pairs in available
-      //there is 2 slot available for each starting time, to start
-      for(int i = 0; i < 23; i++){ // i stop to 22 because either way we need to look at the other day
-        available[i] = 2;
-      }
-      for(int booked in alreadyBooked){
-        available[booked] = available[booked]! - 1;
-        if(available[booked] == 0){
-          available.remove(booked);
-          if(booked - 1 >= 0)
-            available.remove(booked - 1);
-          if(booked + 1 <= 22)
-            available.remove(booked + 1);
-        }
-      }
-      // update map
-      bool deleted = true;
-      while(deleted){
-        List<int> toRemove = [];
-        List<int> keys = available.keys.toList(); // list of the keys of availables
-        bool lastRemoved = false; // to check that we don't delete 2 slots
-        deleted = false;
-        for(int i = 1; i < keys.length - 1; i++){
-          if(available[keys[i]] == 1 && available[keys[i - 1]] == 1 && available[keys[i + 1]] == 1 && !lastRemoved){
-            toRemove.add(keys[i]);
-            deleted = true;
-            lastRemoved = true;
-          }
-          else{
-            lastRemoved = false;
-          }
-        }
-        for(int el in toRemove){
-          available.remove(el);
-        }
-      }
+      List<int> available = [];
 
-      // finally, remove the ones that the user already has
-      if(alreadyBookedBy.contains(userUid)){
-        List<int> toRemove = []; 
-        for(int i = 0; i < alreadyBooked.length; i++){
-          if(alreadyBookedBy[i] == userUid){
-            toRemove.add(alreadyBooked[i]);
-          }
-        }
-        for(int el in toRemove){
-          available.remove(el);
-        }
+      for(int i = 0; i < 24; i++){
+        if(!alreadyBooked.contains(i))
+          available.add(i);
       }
-
 
       return available;
     } catch(e){
-      print(e.toString());
-      return Map.fromIterable(List.generate(23, (index) => index), value: (_) => 2);
+      print("in calendar.dart in _listfromsnap: " + e.toString());
+      return List.generate(24, (index) => index);
     }
   }
 
-  Stream<Map<int, int>> get availableBooking {
+  Stream<List<int>> get availableBooking {
     return _cal.doc(dateUid).snapshots().map(_listFromSnap);
   }
 

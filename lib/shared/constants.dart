@@ -15,30 +15,56 @@ var buttonStyle = ElevatedButton.styleFrom(
                 );
 
 var textInputDecoration = InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: background2,
-                      width: 0.6
-                    )
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: background2,
-                      width: 1.6  
-                    )
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: background2,
-                      width: 0.6
-                    )
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: background2,
-                      width: 1.6  
-                    )
-                  ),
-                );
+  fillColor: Colors.white,
+  focusColor: Colors.blue,
+  filled: true,
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: background2,
+      width: 0.6
+    )
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: background2,
+      width: 1.6  
+    )
+  ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: background2,
+      width: 0.6
+    )
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: background2,
+      width: 1.6  
+    )
+  ),
+);
+
+
+List<String> weekNames = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  List<String> monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
